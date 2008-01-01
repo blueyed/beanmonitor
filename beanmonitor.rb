@@ -18,7 +18,7 @@ options = {
 config = {
   :update => true,
   :debug => false,
-  :savefile => "~/.user_beancounters_old",
+  :savefile => "/root/.user_beancounters_old",
   :beanfile => "/proc/user_beancounters",
   :write => false,
   :email => {}
@@ -63,17 +63,19 @@ OptionParser.new do |opts|
   opts.separator "Email mapping options: (use -w/--write or this is kind of worthless)"
 
   
-  opts.on("--email-add UID:ADDRESS", "Add an email address to be notified for a certain", "uid or for all uids if none is specified") do |v|
+  opts.on("--email-add UID:ADDRESS", "Add an email address to be notified for a certain", "uid or for all uids if none is specified.", "This implies --write which can not be unset by --no-write!") do |v|
     m = v.match(/^(\d+):(.*?)$/)
     if m then
       email[:add] = { :uid => m[1].to_i, :email => m[2] }
     else
       email[:add] = { :uid => :all, :email => v }
     end     
+    options[:write] = v
   end
   
-  opts.on("--email-del ADDRESS", "Remove an email address from the list of recipients. Currently this", "removes all occurences; fix in the near future.") do |v|
+  opts.on("--email-del ADDRESS", "Remove an email address from the list of recipients. Currently this", "removes all occurences; fix in the near future.", "This implies --write which can not be unset by --no-write!") do |v|
     email[:del] = v
+    options[:write] = v
   end
   
   opts.on("--email-list", "Dump recipients list in yaml.") do |v|
@@ -115,6 +117,7 @@ if options[:write] then
   # these values don't need to be written to the config file for obvious reasons
   config.delete(:write)
   config.delete(:config)
+  config.delete(:update)
   
   f.write(YAML::dump(config))
   f.close
@@ -141,7 +144,7 @@ end
 
 
 # output to console
-y failures if actions.index(:show)
+y failures if actions.index(:show) && failures.size != 0
 
 
 # send emails
@@ -160,7 +163,7 @@ if actions.index(:email) then
       config[:email][:all].each do |email|
         tpl = ERB.new(EmailTemplates.admin_template)
         smtp.send_message tpl.result(binding), "root@localhost", config[:email][:all]
-      end
+      end if config[:email].has_key? :all
     end
   rescue
     puts $!

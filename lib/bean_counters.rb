@@ -37,7 +37,7 @@ class BeanCounters
 			next if other.nil?
 
 			d.each do |counter,values|
-				dist = values['failcnt'] - other[counter]['failcnt']
+				dist = other[counter]['failcnt'] - values['failcnt']
 				if dist != 0 then
 					result[uid] = Hash.new unless result.has_key? uid
 					result[uid][counter] = dist
