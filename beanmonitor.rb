@@ -128,6 +128,9 @@ exit if actions.size == 0
 # produce counter diff
 failures = Hash.new
 begin
+  FileUtils.touch(config[:beanfile])
+  FileUtils.touch(config[:savefile])
+
   old_bean = BeanCounters.new(config[:savefile])
   failures = old_bean.diff(BeanCounters.new(config[:beanfile])) if old_bean != BeanCounters.new(config[:beanfile])
   
