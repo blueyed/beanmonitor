@@ -160,10 +160,10 @@ if actions.index(:email) then
       end
   
       # admin emails
-      config[:email][:all].each do |email|
+      if config[:email].has_key? then
         tpl = ERB.new(EmailTemplates.admin_template)
         smtp.send_message tpl.result(binding), "root@localhost", config[:email][:all]
-      end if config[:email].has_key? :all
+      end
     end
   rescue
     puts $!
