@@ -18,19 +18,19 @@ end
 task :source_package => [:clean] do
   sh "mkdir beanmonitor"
   sh "cp -rf lib doc utils LICENSE Rakefile *.rb beanmonitor"
-  sh "tar cfj beanmonitor-src.tar.bz2 beanmonitor"
+  sh "tar cfj beanmonitor-src-#{ENV['VERSION']}.tar.bz2 beanmonitor"
   sh "rm -rf beanmonitor"
 end
 
 task :compile_package => [:clean, :compile] do
-  sh "tar cfj beanmonitor-singlesource.tar.bz2 LICENSE beanmonitor"
+  sh "tar cfj beanmonitor-singlesource-#{ENV['VERSION']}.tar.bz2 LICENSE beanmonitor"
   sh "rm beanmonitor"
 end
 
 task :binary_package => [:binary, :compile] do
   sh "rm -f beanmonitor"
   sh "mv beanmonitor_linux beanmonitor"
-  sh "tar cfj beanmonitor-binary.tar.bz2 LICENSE beanmonitor"
+  sh "tar cfj beanmonitor-binary-#{ENV['VERSION']}.tar.bz2 LICENSE beanmonitor"
   sh "rm beanmonitor"
 end
 

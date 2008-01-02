@@ -98,7 +98,7 @@ end.parse!
 
 # load config file; overwrite config file options with command line
 # options unless nothing is specified on the command line
-config = YAML::load(File.open(options[:config])) if File.exists? options[:config]
+config.merge!(YAML::load(File.open(options[:config]))) if File.exists? options[:config]
 config.merge!(options)
 
 # add email if specified
@@ -115,11 +115,9 @@ if options[:write] then
   f = File.open(config[:config], "w")
   
   # these values don't need to be written to the config file for obvious reasons
-  config.delete(:write)
-  config.delete(:config)
-  config.delete(:update)
+  wconf = config.reject { |k,v| ![:config, :write, :update].index(k).nil? }
   
-  f.write(YAML::dump(config))
+  f.write(YAML::dump(wconf))
   f.close
 end
 
@@ -143,8 +141,12 @@ rescue
 end
 
 
+# drop out if the diff is empty
+exit if failures.size == 0
+
+
 # output to console
-y failures if actions.index(:show) && failures.size != 0
+y failures if actions.index(:show)
 
 
 # send emails
@@ -160,7 +162,7 @@ if actions.index(:email) then
       end
   
       # admin emails
-      if config[:email].has_key? then
+      if config[:email].has_key? :all then
         tpl = ERB.new(EmailTemplates.admin_template)
         smtp.send_message tpl.result(binding), "root@localhost", config[:email][:all]
       end
