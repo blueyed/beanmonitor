@@ -21,7 +21,8 @@ config = {
   :savefile => "/root/.user_beancounters_old",
   :beanfile => "/proc/user_beancounters",
   :write => false,
-  :email => {}
+  :email => {},
+  :sendermail => "root@localhost"
 }
 
 email = {}
@@ -53,7 +54,7 @@ OptionParser.new do |opts|
   opts.on("-u", "--[no-]update", "Save current values to savefile to check for differences", "in the future") do |v|
     options[:update] = v
   end
-  
+
   opts.on("-w", "--[no-]write", "Whether or not to save command line config to config file.", "This does only overwrite values which", "you have specified as command line arguments here; it does", "not touch existing values in th config without a new value specified here.") do |v|
     options[:write] = v
   end
@@ -81,7 +82,10 @@ OptionParser.new do |opts|
   opts.on("--email-list", "Dump recipients list in yaml.") do |v|
     email[:list] = true #postpone this until config has been read
   end
-  
+
+  opts.on("--sendermail ADDRESS", "Set sender mail.") do |v|
+    options[:sendermail] = v
+  end
   
   opts.separator ""
   opts.separator "Actions:"
@@ -158,13 +162,13 @@ if actions.index(:email) then
         next unless config[:email].has_key? uid
 
         tpl = ERB.new(EmailTemplates.user_template)
-        smtp.send_message tpl.result(binding), "root@localhost", config[:email][uid]
+        smtp.send_message tpl.result(binding), config[:sendermail], config[:email][uid]
       end
   
       # admin emails
       if config[:email].has_key? :all then
         tpl = ERB.new(EmailTemplates.admin_template)
-        smtp.send_message tpl.result(binding), "root@localhost", config[:email][:all]
+        smtp.send_message tpl.result(binding), config[:sendermail], config[:email][:all]
       end
     end
   rescue
