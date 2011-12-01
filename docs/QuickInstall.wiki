@@ -1,0 +1,22 @@
+#summary Quickly installing beanmonitor
+#labels Featured,Phase-Deploy
+
+= Steps =
+
+=== Install ruby (do one of the following as root or using sudo) ===
+  * Gentoo: `emerge ruby`
+  * Ubuntu/Debian: `apt-get install ruby`
+  * Fedora/Redhat: `yum install ruby ruby-libs ruby-mode ruby-rdoc ruby-irb ruby-ri ruby-docs`
+
+Most of these commands were stolen from google so no guarantees. 
+
+
+=== Install beanmonitor ===
+Simply run the following command as root / use sudo:
+
+{{{
+wget http://beanmonitor.googlecode.com/files/beanmonitor-singlesource.tar.bz2 ; tar jxf beanmonitor-singlesource.tar.bz2 ; \
+rm LICENSE ; cp beanmonitor /usr/local/bin ; rm beanmonitor ; rm beanmonitor-singlesource.tar.bz2
+}}}
+
+This is kinda hackish but we are in the *quick install* guide here. 

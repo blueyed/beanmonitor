@@ -1,0 +1,115 @@
+#summary How to start using beanmonitor
+#labels Featured,Phase-Deploy
+
+= Introduction =
+
+The primary purpose of beanmonitor is to send emails whenever something is wrong with our user_beancounters. Usually, you need this feature if you are restricting resources (say, for security) but want to be able to increase them when you hit a limit. This is especially useful because an unnoticed resource problem can lead to lots of digging in the wrong direction.
+
+Also, you can use this script to simply see if any failcounts have increased since you last checked using beanmonitor. If this is your use case you can skip everything related to email configuration. Also, you don't need an smtp server then.
+
+
+= Basic startup testing =
+
+Let's assume that you either installed from svn as per the CompilingFromSVN instructions or downloaded a single source copy which you put into your path. Either way, issueing `beanmonitor --help` as root should yield something like this: ^(without the fucked up highlighting; add a non-highlighting version of verbatim, google!)^
+
+{{{
+Usage: /usr/local/bin/beanmonitor [options]
+
+General options:
+    -c, --config CONFIGFILE          Load CONFIGFILE instead of /etc/beanmonitor.conf
+    -d, --[no-]debug                 Enable/disable debug mode (spam a lot of uninformative messages)
+    -b, --beanfile FILENAME          Load current beancounter values from FILENAME
+                                     instead of file specified in the config.
+    -s, --savefile FILENAME          Save current values to FILENAME instead
+                                     of what's specified in the config file
+    -u, --[no-]update                Save current values to savefile to check for differences
+                                     in the future
+    -w, --[no-]write                 Whether or not to save command line config to config file.
+                                     This does only overwrite values which
+                                     you have specified as command line arguments here; it does
+                                     not touch existing values in th config without a new value specified here.
+
+Email mapping options: (use -w/--write or this is kind of worthless)
+        --email-add UID:ADDRESS      Add an email address to be notified for a certain
+                                     uid or for all uids if none is specified.
+                                     This implies --write which can not be unset by --no-write!
+        --email-del ADDRESS          Remove an email address from the list of recipients. Currently this
+                                     removes all occurences; fix in the near future.
+                                     This implies --write which can not be unset by --no-write!
+        --email-list                 Dump recipients list in yaml.
+
+Actions:
+        --show                       Show differences between the last known version of user_beancounters and the current
+                                     state of the aforementioned file. Outputs pure yaml if you care to use it in another ruby script.
+        --email                      Sends emails about differences in failcount to all configured recipients.
+}}}
+
+If that's the case; continue. If not you need to properly install beanmonitor or file a report within the issue tracker.
+
+= Configuration =
+
+== Overview ==
+
+Now, because you installed just one single file, there's no configuration but don't worry - beancounter comes with sensible defaults. Also, you don't need to edit any configuration as you can set anything on the command line using the pretty well documented command line options and just add -w to write it to the config file. If `/etc/beanmonitor.conf` doesn't suit you, you can add -c and tell beanmonitor where to put config data but remember to supply -c each and any time you use beanmonitor as it can't save the config file path anywhere (which is pretty obvious, if you think about it).
+
+For starters, without doing anything, you should be able to just issue
+
+{{{
+beanmonitor --show
+}}}
+
+which should output nothing at all, at least if no failcount has increased since the last time you called it. If that's the case it will output the uid of the vps for which a failcount increase has happened and all counters that were affected, like this, for example:
+
+{{{
+hades beanmonitor # beanmonitor --no-update --show 
+--- 
+201: 
+  privvmpages: 60
+}}}
+
+The output format is yaml and pretty self explanatory.
+
+
+== Detailed configuration ==
+
+Say you want to change the path for the savefile, the file where the last status of all beancounters is stored:
+
+{{{
+beanmonitor --savefile /tmp/savefile -w
+}}}
+
+If you don't add `-w` or `--write` to the argument list, your changes will only last for one execution of beanmonitor. This is useful if you, for example, run beanmonitor from another script without any config file whatsoever.
+
+You can save any changed command line option to the config file using this syntax except for `--write`, `-w`, `--update`, `-u` and `--config`, `-c` because those don't make too much sense in a config file.
+
+
+== Email setup ==
+So, let's pretend that you have two vps with uids 200 and 201. John administrates vps 201 but is a rookie, so you as the host server's administrator want to get failcounter messages for his vps as well. Try this:
+
+{{{
+beanmonitor --email-add 201:john@hisdomain.com
+beanmonitor --email-add you@yourdomain.com
+beanmonitor --email-list
+}}}
+
+What this does is add `john@hosdomain.com` as a recipient for all failcounter increases for vps 201 and `you@yourdomain.com` for failcounter increases on the entire openvz enabled machine. So when a counter for 201 increases, both you and john are notified whereas when a counter for 200 increases, you are the only one who is notified.
+
+You don't need to specify the `--write` switch for `--email-*` operations, because they imply it as they don't make much sense without it.
+
+You can try sending emails by artificially decreasing a counter in your `savefile` and running `beanmonitor --email`.
+
+
+== Adding it to cron ==
+In order to make beanmonitor really useful, finish the setup and after that, add it to cron. A common way to do that would be running
+
+{{{
+crontab -e -u root
+}}}
+
+which opens root's crontab in your favorite editor and adding a line like 
+
+{{{
+*/5 * * * * /usr/local/bin/beanmonitor --email
+}}}
+
+to it. This would run beanmonitor every 5 minutes sending emails whenever a change is detected.

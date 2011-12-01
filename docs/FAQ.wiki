@@ -1,0 +1,30 @@
+#summary Frequently Asked Questions
+#labels Featured
+
+= Frequently Asked Questions =
+
+=== Why would you waste your time? There's already monbean! ([http://download.openvz.org/contrib/utils/monbean/ ftp site here]) ===
+
+To my mind, monbean is in a state called _abandoned project_. The last patch released is from august ([http://forum.openvz.org/index.php?t=tree&th=3169& found here]. I'm certainly no fan of reinventing the wheel too often but for me, monbean didn't work, there was no decent documentation, no real project page and well ... I'm not going to fix any perl code; it's not 1980 anymore. 
+
+Think whatever you want but it took me like 4 hours to write a tool which has more features and works out of the box for me. Btw, I don't usually install perl or any cpan modules. I used to use it a couple of decades ago, though, and I'm happy with using ruby now. Don't get me wrong, Larry Wall is a great guy and wrote a pretty decent scripting language review a couple of days ago but I'll just wait for version 6 to be released before I look at anything perl again.
+
+
+=== I don't have ruby; I don't want ruby; use a decent language! ===
+Like what? PHP? I explained why I don't particularly like Perl right above; PHP is worse. Much much worse actually. So what's left; c? This task is about parsing strings and doesn't need to be fast so I don't think a high level low security language will do. Anyway if you don't like it you can get a decent diff with email support in one line of shell script like this:
+
+{{{
+cd ~ && mv new current && cat /proc/user_beancounters | sed 's/^.* //' > new && diff -Nau current new | sendmail -t root
+}}}
+
+That, of course, won't tell you what exactly just happened but at least you'll know that you need to check.
+
+
+=== Good god there are just a brazillion files on svn! What do I do? ===
+
+Check downloads. Every so often I will `tar cfz` a singel file executable and release it as a download. Usually, we'd want to call these releases stable though I'm not sure if that's truly the condition this very young software package is in.
+
+
+=== You mentioned a Rakefile on the front page, what about it? ===
+
+If you feel like living on the bleeding edge you can grab a copy of the svn trunk and use the aforementioned Rakefile to create a single source code executable of beanmonitor. Check [CompilingFromSVN Compiling Beanmonitor from SVN] for further information.

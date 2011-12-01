@@ -1,0 +1,35 @@
+#summary How to compile a version of Beanmonitor from SVN
+#labels Featured,Phase-Deploy
+
+=== Compiling from SVN ===
+
+This is supposed to be a simple guide. Just follow the steps and you should end up with a current version (as in bleeding edge) of Beanmonitor somewhere in your path. 
+
+Obviously, you need to have subversion and ruby installed for this to work. Also, you should be on unix, most likely linux, simply because you are running openvz (you are, right?). Being logged in a root never hurts; obviously you'll need to be root to use that so there's not too much sense in compiling it as a user, but that's of course just my humble opinion. Feel free to run the like ... 5 commands I'll list now as some underprivileged user and just copy the executable into root's path using root or even sudo, I just won't explain how to do it.
+
+First, let's fetch a copy from SVN like this:
+
+
+{{{
+svn checkout http://beanmonitor.googlecode.com/svn/trunk/ beanmonitor-read-only
+}}}
+
+Now, cd into the directory we just acquired like this:
+
+{{{
+cd beanmonitor-read-only/
+}}}
+
+Run the rake task to create a single file executable like this (you, btw, need rake for that.):
+
+{{{
+rake compile
+}}}
+
+You should now have a file called beanmonitor in the current directory; if not feel free to add a comment to the issue tracker. Now let's finish up by copying the executable into your path; usually, this should do the trick:
+
+{{{
+cp beanmonitor /usr/local/bin
+}}}
+
+Try doing `beanmonitor --help` to see if it's working and continue with the [HowToGetGoing] wiki page.
