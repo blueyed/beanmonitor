@@ -1,0 +1,67 @@
+#summary How to compile the latest version of Beanmonitor from Git
+#labels Featured,Phase-Deploy
+
+== Prequesisits ==
+
+* linux
+* git
+* ruby
+* wget
+* unzip
+* log in as root
+
+=== Install ruby ===
+
+  * Gentoo: `emerge ruby`
+  * Ubuntu/Debian: `apt-get install ruby`
+  * Fedora/Redhat: `yum install ruby ruby-libs ruby-mode ruby-rdoc ruby-irb ruby-ri ruby-docs`
+
+== Quick install ==
+
+Simply run the following command as root / use sudo:
+
+<code>
+wget https://github.com/hm2k/beanmonitor/zipball/master && unzip hm2k-beanmonitor-*.zip && cd hm2k-beanmonitor-* && rake compile && cp beanmonitor /usr/local/bin && beanmonitor --help
+</code>
+
+This is the quick install method, for a more in depth description of these commands see below:
+
+== Compiling from Git ==
+
+This is a simple guide to install the latest (bleeding edge) copy of beanmonitor.
+
+=== Get the latest zip ===
+
+<code>
+wget https://github.com/hm2k/beanmonitor/zipball/master
+</code>
+
+=== Extract the zip ===
+
+<code>
+unzip hm2k-beanmonitor-*.zip
+</code>
+
+=== Change directory ===
+
+<code>
+cd hm2k-beanmonitor-*
+</code>
+
+=== Run the rake compile ===
+
+<code>
+rake compile
+</code>
+
+=== Copy the binary to your local binaries ===
+
+<code>
+cp beanmonitor /usr/local/bin
+</code>
+
+=== Test it works ===
+
+<code>
+beanmonitor --help
+</code>
