@@ -1,30 +1,31 @@
 #summary How to compile the latest version of Beanmonitor from Git
 #labels Featured,Phase-Deploy
 
-== Prequesisits ==
+== Prerequisites ==
 
-* linux
-* git
 * ruby
 * wget
 * unzip
 * log in as root
 
+This (beanmonitor) can be installed on the OpenVZ hardware node or a regular OpenVZ Linux container VPS.
+
 === Install ruby ===
 
   * Gentoo: `emerge ruby`
   * Ubuntu/Debian: `apt-get install ruby`
-  * Fedora/Redhat: `yum install ruby ruby-libs ruby-mode ruby-rdoc ruby-irb ruby-ri ruby-docs`
+  * Fedora/Redhat/CentOS: `yum install ruby ruby-libs ruby-mode ruby-rdoc ruby-irb ruby-ri ruby-docs`
+  * cPanel: `/scripts/installruby`
 
 == Quick install ==
 
 Simply run the following command as root / use sudo:
 
 <code>
-wget https://github.com/hm2k/beanmonitor/zipball/master && unzip hm2k-beanmonitor-*.zip && cd hm2k-beanmonitor-* && rake compile && cp beanmonitor /usr/local/bin && beanmonitor --help
+wget --no-check-certificate https://github.com/hm2k/beanmonitor/zipball/master -O beanmonitor.zip && unzip beanmonitor*.zip && cd hm2k-beanmonitor-* && rake compile && cp beanmonitor /usr/local/bin && beanmonitor --help
 </code>
 
-This is the quick install method, for a more in depth description of these commands see below:
+This is the quick install method, for a more in depth details of these commands see below:
 
 == Compiling from Git ==
 
@@ -33,8 +34,10 @@ This is a simple guide to install the latest (bleeding edge) copy of beanmonitor
 === Get the latest zip ===
 
 <code>
-wget https://github.com/hm2k/beanmonitor/zipball/master
+wget --no-check-certificate https://github.com/hm2k/beanmonitor/zipball/master
 </code>
+
+Note: --no-check-certificate is used to avoid any issues with https.
 
 === Extract the zip ===
 
